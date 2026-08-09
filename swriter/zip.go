@@ -22,6 +22,10 @@ func TakeTimestamp() {
 	zipTime = hour<<11 | minute<<5
 }
 
+func GetTimestamp() uint32 {
+	return uint32(zipTime)<<16 | uint32(zipDate)
+}
+
 func WriteZipEntry(zippable Zippable, modLocalWriter *SimpleWriter, modCentralWriter *SimpleWriter, offsetAdjustment uint32) error {
 	offset := modLocalWriter.GetLength() + offsetAdjustment
 	uncompressed, compressed, err := toWritable(zippable)
