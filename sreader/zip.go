@@ -82,3 +82,7 @@ func (r *SimpleZipReader) GetAllByAnyExt(exts []string) []*zip.File {
 	}
 	return out
 }
+
+func (r *SimpleZipReader) Name() string {
+	return r.name
+}
