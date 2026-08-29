@@ -2,11 +2,27 @@ package sreader
 
 import (
 	"archive/zip"
+	"bytes"
+	"io"
+	"os"
 	"path/filepath"
 )
 
 func OpenArchive(name string) (*SimpleZipReader, error) {
-	archive, err := zip.OpenReader(name)
+	f, err := os.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	buf, err := io.ReadAll(f)
+	if err != nil {
+		return nil, err
+	}
+	return OpenArchiveFromBytes(name, &buf)
+}
+
+func OpenArchiveFromBytes(name string, buf *[]byte) (*SimpleZipReader, error) {
+	archive, err := zip.NewReader(bytes.NewReader(*buf), int64(len(*buf)))
 	if err != nil {
 		return nil, err
 	}
@@ -24,10 +40,6 @@ func OpenArchive(name string) (*SimpleZipReader, error) {
 		byExtension[ext] = append(byExtension[ext], file)
 	}
 	return &SimpleZipReader{name, archive, entries, byName, byExtension}, nil
-}
-
-func (r *SimpleZipReader) Close() error {
-	return r.archive.Close()
 }
 
 func (r *SimpleZipReader) GetFile(name string) (*zip.File, bool) {

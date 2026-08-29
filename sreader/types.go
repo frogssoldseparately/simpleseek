@@ -25,7 +25,7 @@ type SimpleReader struct {
 
 type SimpleZipReader struct {
 	name        string
-	archive     *zip.ReadCloser
+	archive     *zip.Reader
 	entries     []*zip.File
 	byName      map[string]*zip.File
 	byExtension map[string][]*zip.File
